@@ -34,6 +34,7 @@ def main():
     kk_img_rev = pg.transform.flip(kk_img, True, False)
     kk_rct = kk_img.get_rect()
     kk_rct.center = 900, 400
+    # 移動量の合計値をキーとし、rotozoomしたSurfaceを値とした辞書
     kk_direction = {
         (0, 0): pg.transform.rotozoom(kk_img, 0, 2.0),
         (-5, 0): pg.transform.rotozoom(kk_img, 0, 2.0),
@@ -62,26 +63,29 @@ def main():
             if event.type == pg.QUIT: 
                 return
         
+        # ゲームオーバー時の処理
         if kk_rct.colliderect(bd_rct):
             return 
         screen.blit(bg_img, [0, 0])
 
+        # 押下キーに応じてこうかとんを移動させる
         key_lst = pg.key.get_pressed()
-        sum_mv = [0, 0]
+        sum_mv = [0, 0] # 合計移動量
         for k, mv in delta.items():
             if key_lst[k]: 
                 sum_mv[0] += mv[0]
                 sum_mv[1] += mv[1]
         kk_rct.move_ip(sum_mv)
+        # こうかとんの画面外判定
         if judge_bound(kk_rct) != (True, True):
             kk_rct.move_ip(-sum_mv[0], -sum_mv[1])
 
         screen.blit(kk_direction[tuple(sum_mv)], kk_rct)
-        
+        # 爆弾の跳ね返り処理
         judge_bd = judge_bound(bd_rct)
-        if not judge_bd[0]:
+        if not judge_bd[0]: # もし横方向に画面外だったら
             vx *= -1
-        if not judge_bd[1]:
+        if not judge_bd[1]: # もし縦方向に画面外だったら
             vy *= -1 
         bd_rct.move_ip(vx, vy)
         screen.blit(bd_img, bd_rct)
