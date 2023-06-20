@@ -37,6 +37,7 @@ def main():
     kk_img_rev = pg.transform.flip(kk_img, True, False)
     kk_rct = kk_img.get_rect()
     kk_rct.center = 900, 400
+
     # 移動量の合計値をキーとし、rotozoomしたSurfaceを値とした辞書
     kk_direction = {
         (0, 0): pg.transform.rotozoom(kk_img, 0, 2.0),
