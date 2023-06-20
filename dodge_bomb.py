@@ -32,6 +32,9 @@ def main():
     bg_img = pg.image.load("ex02/fig/pg_bg.jpg")
     kk_img = pg.image.load("ex02/fig/3.png")
     kk_img_rev = pg.transform.flip(kk_img, True, False)
+    kk_img_gameover = pg.image.load("ex02/fig/8.png")
+    kk_img_gameover = pg.transform.rotozoom(kk_img_gameover, 0, 2.0)
+    kk_img_rev = pg.transform.flip(kk_img, True, False)
     kk_rct = kk_img.get_rect()
     kk_rct.center = 900, 400
     # 移動量の合計値をキーとし、rotozoomしたSurfaceを値とした辞書
@@ -65,6 +68,11 @@ def main():
         
         # ゲームオーバー時の処理
         if kk_rct.colliderect(bd_rct):
+            screen.blit(bg_img, [0, 0])
+            screen.blit(kk_img_gameover, kk_rct)
+            screen.blit(bd_img, bd_rct)
+            pg.display.update()
+            pg.time.delay(2000)
             return 
         screen.blit(bg_img, [0, 0])
 
@@ -76,17 +84,20 @@ def main():
                 sum_mv[0] += mv[0]
                 sum_mv[1] += mv[1]
         kk_rct.move_ip(sum_mv)
+
         # こうかとんの画面外判定
         if judge_bound(kk_rct) != (True, True):
             kk_rct.move_ip(-sum_mv[0], -sum_mv[1])
 
         screen.blit(kk_direction[tuple(sum_mv)], kk_rct)
+
         # 爆弾の跳ね返り処理
         judge_bd = judge_bound(bd_rct)
         if not judge_bd[0]: # もし横方向に画面外だったら
             vx *= -1
         if not judge_bd[1]: # もし縦方向に画面外だったら
             vy *= -1 
+
         bd_rct.move_ip(vx, vy)
         screen.blit(bd_img, bd_rct)
 
