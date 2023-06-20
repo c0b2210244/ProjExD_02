@@ -49,7 +49,10 @@ def main():
             if event.type == pg.QUIT: 
                 return
         
-            key_lst = pg.key.get_pressed()
+        if kk_rct.colliderect(bd_rct):
+            return 
+
+        key_lst = pg.key.get_pressed()
         sum_mv = [0, 0]  # 合計移動量
         for k, mv in delta.items():
             if key_lst[k]: 
