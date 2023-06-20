@@ -11,6 +11,19 @@ delta = {
     pg.K_RIGHT: (+5, 0),
 }
 
+def judge_bound(rct: pg.Rect) -> tuple[bool, bool]:
+
+    """
+    こうかとんRect、爆弾Rectが画面外かを判定する関数
+    引数：こうかとんRect or 爆弾Rect
+    戻り値：横方向と縦王侯のタプル (True:画面内/False:画面外)
+    """
+    yoko, tate = True, True
+    if rct.left < 0 or WIDTH < rct.right:
+        yoko = False
+    if rct.top < 0 or HEIGHT < rct.bottom:
+        tate = False
+    return yoko, tate
 
 def main():
     pg.display.set_caption("逃げろ！こうかとん")
@@ -35,16 +48,28 @@ def main():
         for event in pg.event.get():
             if event.type == pg.QUIT: 
                 return
-
-        key_lst = pg.key.get_pressed()
-        for k, v in delta.items():
-            if key_lst[k]:
-                kk_rct.move_ip(v)
-
+        
+            key_lst = pg.key.get_pressed()
+        sum_mv = [0, 0]  # 合計移動量
+        for k, mv in delta.items():
+            if key_lst[k]: 
+                sum_mv[0] += mv[0]
+                sum_mv[1] += mv[1]
+        kk_rct.move_ip(sum_mv)
+        if judge_bound(kk_rct) != (True, True):
+            kk_rct.move_ip(-sum_mv[0], -sum_mv[1])
         screen.blit(bg_img, [0, 0])
+
         screen.blit(kk_img, kk_rct)
+
+        judge_bd = judge_bound(bd_rct)
+        if not judge_bd[0]:
+            vx *= -1
+        if not judge_bd[1]:
+            vy *= -1 
         bd_rct.move_ip(vx, vy)
         screen.blit(bd_img, bd_rct)
+
         pg.display.update()
         tmr += 1
         clock.tick(50)
